@@ -432,7 +432,7 @@ const saveDeliveryAddress = () => {
                         src={
                           item.productId
                             .image
-                            ? `http://localhost:5004/${item.productId.image}`
+                            ? `${import.meta.env.VITE_API_URL}/${item.productId.image}`
                             : "https://via.placeholder.com/150"
                         }
                         alt=""
