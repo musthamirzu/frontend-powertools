@@ -14,6 +14,8 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
+  const [mobileShopOpen, setMobileShopOpen] =
+  useState(false);
   const popupRef = useRef();
   const navigate = useNavigate();
 
@@ -188,29 +190,187 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE MENU */}
-      {menuOpen && (
-        <div className="md:hidden px-4 pb-4 space-y-3 text-gray-700">
+     {menuOpen && (
+  <div
+    className="
+      md:hidden
+      bg-white
+      border-t
+      shadow-lg
+      px-5
+      py-4
+    "
+  >
+    {/* Search */}
+    <input
+      placeholder="Search Products..."
+      className="
+        w-full
+        px-4
+        py-3
+        rounded-xl
+        bg-gray-100
+        border
+        mb-5
+      "
+    />
 
-          <input
-            placeholder="Search"
-            className="w-full px-4 py-2 rounded-full bg-gray-100 border"
-          />
+    {/* Menu Items */}
+    <div className="flex flex-col gap-4">
 
-          <span onClick={() => scrollToSection("about")}>
-            ABOUT US
+      <button
+        onClick={() => scrollToSection("about")}
+        className="
+          text-left
+          font-medium
+          py-2
+          border-b
+        "
+      >
+        ABOUT US
+      </button>
+
+      {/* Mobile Shop */}
+      <div>
+
+        <button
+          onClick={() =>
+            setMobileShopOpen(
+              !mobileShopOpen
+            )
+          }
+          className="
+            w-full
+            flex
+            justify-between
+            items-center
+            font-medium
+            py-2
+            border-b
+          "
+        >
+          <span>SHOP</span>
+
+          <span>
+            {mobileShopOpen
+              ? "−"
+              : "+"}
           </span>
+        </button>
 
-          {/* ✅ FIXED */}
-          <span onClick={() => scrollToSection("contact")}>
-            CONTACT US
-          </span>
+        {mobileShopOpen && (
+          <div
+            className="
+              mt-2
+              ml-3
+              bg-gray-50
+              rounded-xl
+              overflow-hidden
+            "
+          >
 
-          <div className="text-sm text-gray-600">
-            +91 7402471678 <br />
-            info@nptpowertools.in
+            <div
+              onClick={() => {
+                navigate("/products");
+                setMenuOpen(false);
+              }}
+              className="
+                px-4
+                py-3
+                border-b
+                cursor-pointer
+              "
+            >
+              View All
+            </div>
+
+            <div
+              onClick={() => {
+                navigate(
+                  "/products/power-tools"
+                );
+                setMenuOpen(false);
+              }}
+              className="
+                px-4
+                py-3
+                border-b
+                cursor-pointer
+              "
+            >
+              Power Tools
+            </div>
+
+            <div
+              onClick={() => {
+                navigate(
+                  "/products/power-tools-accessories"
+                );
+                setMenuOpen(false);
+              }}
+              className="
+                px-4
+                py-3
+                border-b
+                cursor-pointer
+              "
+            >
+              Power Tools Accessories
+            </div>
+
+            <div
+              onClick={() => {
+                navigate(
+                  "/products/hand-tools"
+                );
+                setMenuOpen(false);
+              }}
+              className="
+                px-4
+                py-3
+                cursor-pointer
+              "
+            >
+              Hand Tools
+            </div>
+
           </div>
-        </div>
-      )}
+        )}
+
+      </div>
+
+      <button
+        onClick={() =>
+          scrollToSection("contact")
+        }
+        className="
+          text-left
+          font-medium
+          py-2
+          border-b
+        "
+      >
+        CONTACT US
+      </button>
+
+    </div>
+
+    {/* Contact Info */}
+    <div
+      className="
+        mt-5
+        text-sm
+        text-gray-500
+        border-t
+        pt-4
+      "
+    >
+      <p>📞 +91 7402471678</p>
+      <p>✉️ info@nptpowertools.in</p>
+    </div>
+
+  </div>
+)}
     </div>
   );
 }
