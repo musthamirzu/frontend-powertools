@@ -16,6 +16,8 @@ import AdminRoute from "./pages/auth/AdminRoute";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import Checkout from "./pages/user/Checkout";
+import ResetPassword from "./pages/auth/ResetPassword";
+import ForgotPassword from "./pages/auth/ForgetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -107,6 +109,16 @@ function App() {
       <Checkout />
     </ProtectedRoute>
   }
+/>
+
+<Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+
+<Route
+  path="/reset-password/:token"
+  element={<ResetPassword />}
 />
       </Routes>
     </BrowserRouter>
