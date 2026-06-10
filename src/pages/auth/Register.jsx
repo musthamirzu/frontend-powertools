@@ -76,10 +76,10 @@ export default function Register() {
     !form.password
       ? ""
       : form.password.length < 6
-      ? "Weak"
-      : form.password.length < 10
-      ? "Medium"
-      : "Strong";
+        ? "Weak"
+        : form.password.length < 10
+          ? "Medium"
+          : "Strong";
 
   const handleRegister =
     async () => {
@@ -98,16 +98,28 @@ export default function Register() {
       try {
         setLoading(true);
 
-        await API.post(
+        const res = await API.post(
           "/auth/register",
           {
             name: form.name,
             email: form.email,
-            password:
-              form.password,
+            password: form.password,
           }
         );
 
+        // Save JWT
+        localStorage.setItem(
+          "token",
+          res.data.token
+        );
+
+        // Save User
+        localStorage.setItem(
+          "user",
+          JSON.stringify(res.data.user)
+        );
+
+        // Go to profile completion
         navigate("/profile");
 
       } catch (err) {
@@ -444,12 +456,11 @@ export default function Register() {
                 text-sm
                 mb-4
                 font-medium
-                ${
-                  passwordStrength ===
+                ${passwordStrength ===
                   "Strong"
-                    ? "text-green-600"
-                    : passwordStrength ===
-                      "Medium"
+                  ? "text-green-600"
+                  : passwordStrength ===
+                    "Medium"
                     ? "text-yellow-600"
                     : "text-red-600"
                 }

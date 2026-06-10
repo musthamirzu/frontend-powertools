@@ -230,43 +230,7 @@ export default function Login() {
           >
             Login to continue
           </p>
-          <div className="my-5">
-  <GoogleLogin
-    onSuccess={
-      async (response) => {
-
-        const res =
-          await API.post(
-            "/auth/google",
-            {
-              credential:
-                response.credential,
-            }
-          );
-
-        localStorage.setItem(
-          "token",
-          res.data.token
-        );
-
-        localStorage.setItem(
-          "user",
-          JSON.stringify(
-            res.data.user
-          )
-        );
-
-        navigate("/");
-      }
-    }
-    onError={() =>
-      alert(
-        "Google Login Failed"
-      )
-    }
-  />
-</div>
-
+        
           {/* ERROR */}
           {error && (
             <div
@@ -415,7 +379,56 @@ export default function Login() {
               Forgot Password?
             </Link>
           </div>
+  <div className="relative mb-6">
+  <div className="absolute inset-0 flex items-center">
+    <div className="w-full border-t border-gray-300"></div>
+  </div>
 
+  <div className="relative flex justify-center">
+    <span className="bg-white px-4 text-sm text-gray-500">
+      Continue With
+    </span>
+  </div>
+</div>
+
+<div className="mb-6 flex justify-center">
+  <GoogleLogin
+    onSuccess={async (response) => {
+      try {
+        const res = await API.post(
+          "/auth/google",
+          {
+            credential:
+              response.credential,
+          }
+        );
+
+        localStorage.setItem(
+          "token",
+          res.data.token
+        );
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(
+            res.data.user
+          )
+        );
+
+        navigate("/");
+      } catch (err) {
+        console.log(err);
+      }
+    }}
+    onError={() =>
+      alert("Google Login Failed")
+    }
+    theme="outline"
+    size="large"
+    shape="pill"
+    width="350"
+  />
+</div>
           {/* LOGIN BUTTON */}
           <button
             onClick={handleLogin}
