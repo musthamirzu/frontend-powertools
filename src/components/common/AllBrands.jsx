@@ -1,143 +1,7 @@
 import React, { useState } from "react";
 
-
-const productsData = {
-  Stanley: [
-    {
-      id: 1,
-      name: "Stanley Drill Machine",
-      price: "₹3,500",
-      img: "https://images.unsplash.com/photo-1581092160607-ee22731c9cce",
-    },
-    {
-      id: 2,
-      name: "Stanley Hammer",
-      price: "₹800",
-      img: "https://images.unsplash.com/photo-1602524814665-5bfa9a316bed",
-    },
-    {
-      id: 3,
-      name: "Stanley Measuring Tape",
-      price: "₹450",
-      img: "https://images.unsplash.com/photo-1581092335397-9583eb92d232",
-    },
-    {
-      id: 4,
-      name: "Stanley Screwdriver Set",
-      price: "₹950",
-      img: "https://images.unsplash.com/photo-1581091215367-59ab6b1b5b2d",
-    },
-  ],
-
-  Makita: [
-    {
-      id: 1,
-      name: "Makita Angle Grinder",
-      price: "₹5,200",
-      img: "https://images.unsplash.com/photo-1597262975002-c5c3b14bbd62",
-    },
-    {
-      id: 2,
-      name: "Makita Drill",
-      price: "₹4,000",
-      img: "https://images.unsplash.com/photo-1604147706283-d7119b5b8227",
-    },
-    {
-      id: 3,
-      name: "Makita Circular Saw",
-      price: "₹7,800",
-      img: "https://images.unsplash.com/photo-1581092919531-3b2fdb6cb3cb",
-    },
-    {
-      id: 4,
-      name: "Makita Impact Driver",
-      price: "₹6,300",
-      img: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8",
-    },
-  ],
-
-  Bosch: [
-    {
-      id: 1,
-      name: "Bosch Electric Drill",
-      price: "₹4,200",
-      img: "https://images.unsplash.com/photo-1604147706283-d7119b5b8227",
-    },
-    {
-      id: 2,
-      name: "Bosch Heat Gun",
-      price: "₹3,100",
-      img: "https://images.unsplash.com/photo-1581092919531-3b2fdb6cb3cb",
-    },
-    {
-      id: 3,
-      name: "Bosch Angle Grinder",
-      price: "₹5,500",
-      img: "https://images.unsplash.com/photo-1597262975002-c5c3b14bbd62",
-    },
-    {
-      id: 4,
-      name: "Bosch Tool Kit",
-      price: "₹8,000",
-      img: "https://images.unsplash.com/photo-1581091215367-59ab6b1b5b2d",
-    },
-  ],
-
-  DeWalt: [
-    {
-      id: 1,
-      name: "DeWalt Impact Driver",
-      price: "₹6,500",
-      img: "https://images.unsplash.com/photo-1586864387967-d02ef85d93e8",
-    },
-    {
-      id: 2,
-      name: "DeWalt Drill Machine",
-      price: "₹5,200",
-      img: "https://images.unsplash.com/photo-1604147706283-d7119b5b8227",
-    },
-    {
-      id: 3,
-      name: "DeWalt Hammer Drill",
-      price: "₹7,200",
-      img: "https://images.unsplash.com/photo-1581092160607-ee22731c9cce",
-    },
-    {
-      id: 4,
-      name: "DeWalt Circular Saw",
-      price: "₹9,000",
-      img: "https://images.unsplash.com/photo-1581092919531-3b2fdb6cb3cb",
-    },
-  ],
-
-  Tuqo: [
-    {
-      id: 1,
-      name: "Tuqo Cutter",
-      price: "₹2,500",
-      img: "https://images.unsplash.com/photo-1581092919531-3b2fdb6cb3cb",
-    },
-    {
-      id: 2,
-      name: "Tuqo Screwdriver",
-      price: "₹1,200",
-      img: "https://images.unsplash.com/photo-1581091215367-59ab6b1b5b2d",
-    },
-    {
-      id: 3,
-      name: "Tuqo Drill Machine",
-      price: "₹3,800",
-      img: "https://images.unsplash.com/photo-1604147706283-d7119b5b8227",
-    },
-    {
-      id: 4,
-      name: "Tuqo Hammer",
-      price: "₹900",
-      img: "https://images.unsplash.com/photo-1602524814665-5bfa9a316bed",
-    },
-  ],
-};
-
+import API from "../../services/api";
+import { useEffect } from "react";
 export default function BrandsSection() {
  const [brands, setBrands] =
   useState([]);
@@ -150,11 +14,7 @@ const [products,
   setProducts] =
   useState([]);
 
-  useEffect(() => {
-  fetchBrands();
-}, []);
-
-const fetchBrands =
+  const fetchBrands =
   async () => {
     try {
 
@@ -178,14 +38,11 @@ const fetchBrands =
     }
   };
   useEffect(() => {
+  fetchBrands();
+}, []);
 
-  if (activeBrand) {
-    fetchProductsByBrand();
-  }
 
-}, [activeBrand]);
-
-const fetchProductsByBrand =
+  const fetchProductsByBrand =
   async () => {
     try {
 
@@ -204,6 +61,15 @@ const fetchProductsByBrand =
 
     }
   };
+  useEffect(() => {
+
+  if (activeBrand) {
+    fetchProductsByBrand();
+  }
+
+}, [activeBrand]);
+
+
   return (
     <section className="bg-gradient-to-b from-gray-50 to-gray-100 py-20 px-6 md:px-20">
 
