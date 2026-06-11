@@ -532,7 +532,7 @@ export default function Cart() {
                     flex justify-between
                   ">
                     <span className="text-gray-500">
-                      GST (18%)
+                      GST (8%)
                     </span>
 
                     <span className="font-semibold">

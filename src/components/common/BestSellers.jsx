@@ -1,111 +1,257 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 
-const products = [
-  {
-    id: 1,
-    name: "3M Dust Mask - TSP403",
-    price: 11,
-    oldPrice: 14,
-    tag: "ON SALE",
-    image: "/images/mask.png",
-  },
-  {
-    id: 2,
-    name: "Gardena 3pcs Hose Quick Connector Set - THWS030301",
-    price: 199,
-    oldPrice: 250,
-    tag: "BEST SELLER",
-    image: "/images/hose.png",
-  },
-  {
-    id: 3,
-    name: "Bosch 9 Pcs Interchangeable Screwdriver Set - THT250906",
-    price: 576,
-    oldPrice: 720,
-    tag: "ON SALE",
-    image: "/images/screwdriver.png",
-  },
-  {
-    id: 4,
-    name: "Stanley 12\" Hacksaw Frame Adjustable Tension - THT54106",
-    price: 699,
-    oldPrice: 875,
-    tag: "ON SALE",
-    image: "/images/hacksaw.png",
-  },
-  {
-    id: 5,
-    name: "DeWalt 8 Inch Mini Bolt Cutter - THT11386",
-    price: 360,
-    oldPrice: 450,
-    tag: "ON SALE",
-    image: "/images/cutter.png",
-  },
-];
+export default function BestSellers() {
+  const [products, setProducts] =
+    useState([]);
 
-const BestSellers = () => {
-  return (
-    <div className="bg-gray-100 py-12 px-4 md:px-20">
-   
-      <h2 className="text-4xl font-semibold text-center mb-10">
-        Best Sellers
-      </h2>
+  const [loading, setLoading] =
+    useState(true);
 
-      <div className="space-y-6">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border"
-          >
-            {/* LEFT SECTION */}
-            <div className="flex items-center gap-4">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-16 h-16 object-contain"
-              />
+  const navigate = useNavigate();
 
-              <div>
-                {/* TAG */}
-                <span
-                  className={`text-xs px-2 py-1 rounded text-white ${
-                    product.tag === "BEST SELLER"
-                      ? "bg-green-500"
-                      : "bg-orange-500"
-                  }`}
-                >
-                  {product.tag}
-                </span>
+  useEffect(() => {
+    fetchBestSellers();
+  }, []);
 
-                {/* NAME */}
-                <p className="text-gray-700 mt-2 text-sm md:text-base">
-                  {product.name}
-                </p>
-              </div>
-            </div>
+  const fetchBestSellers =
+    async () => {
+      try {
 
-            {/* RIGHT SECTION */}
-            <div className="text-right">
-              {/* OLD PRICE */}
-              <p className="text-gray-400 line-through text-sm">
-                ₹{product.oldPrice.toFixed(2)}
-              </p>
+        const res =
+          await API.get(
+            "/products/best-sellers"
+          );
 
-              {/* NEW PRICE */}
-              <p className="text-lg font-semibold text-gray-800">
-                ₹{product.price.toFixed(2)}
-              </p>
+        setProducts(
+          res.data
+        );
 
-              {/* BUTTON */}
-              <button className="mt-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm">
-                Buy Now
-              </button>
-            </div>
-          </div>
-        ))}
+      } catch (err) {
+
+        console.log(err);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
+
+  if (loading) {
+    return (
+      <div className="py-20 text-center">
+        Loading Best Sellers...
       </div>
-    </div>
-  );
-};
+    );
+  }
 
-export default BestSellers;
+  if (products.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="bg-gray-100 py-14 px-4 md:px-20">
+
+      <div className="text-center mb-12">
+
+        <span
+          className="
+            text-red-600
+            font-semibold
+            uppercase
+            tracking-widest
+          "
+        >
+          Top Picks
+        </span>
+
+        <h2
+          className="
+            text-4xl
+            md:text-5xl
+            font-black
+            mt-2
+          "
+        >
+          Best Sellers
+        </h2>
+
+        <p className="text-gray-500 mt-3">
+          Most popular products chosen by our customers
+        </p>
+
+      </div>
+
+      <div className="space-y-5">
+
+        {products.map(
+          (product) => (
+
+            <div
+              key={product._id}
+              className="
+                bg-white
+                rounded-2xl
+                shadow-md
+                hover:shadow-xl
+                transition-all
+                duration-300
+                border
+                border-gray-100
+                p-4
+                flex
+                flex-col
+                md:flex-row
+                md:items-center
+                md:justify-between
+                gap-4
+              "
+            >
+
+              {/* LEFT */}
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-4
+                "
+              >
+
+                <div
+                  className="
+                    relative
+                    w-24
+                    h-24
+                    bg-gray-50
+                    rounded-xl
+                    overflow-hidden
+                  "
+                >
+
+                  <img
+                    src={
+                      product.image
+                    }
+                    alt={
+                      product.name
+                    }
+                    className="
+                      w-full
+                      h-full
+                      object-contain
+                      p-2
+                    "
+                  />
+
+                  <span
+                    className="
+                      absolute
+                      top-2
+                      left-2
+                      bg-green-500
+                      text-white
+                      text-[10px]
+                      px-2
+                      py-1
+                      rounded-full
+                      font-bold
+                    "
+                  >
+                    BEST SELLER
+                  </span>
+
+                </div>
+
+                <div>
+
+                  <h3
+                    className="
+                      font-bold
+                      text-lg
+                      text-gray-800
+                    "
+                  >
+                    {product.name}
+                  </h3>
+
+                  <p
+                    className="
+                      text-sm
+                      text-gray-500
+                      mt-1
+                    "
+                  >
+                    {product.brand}
+                  </p>
+
+                  <p
+                    className="
+                      text-sm
+                      text-gray-400
+                      mt-1
+                    "
+                  >
+                    Stock:
+                    {" "}
+                    {product.stock}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* RIGHT */}
+              <div
+                className="
+                  flex
+                  flex-col
+                  items-start
+                  md:items-end
+                "
+              >
+
+                <h4
+                  className="
+                    text-2xl
+                    font-black
+                    text-green-600
+                  "
+                >
+                  ₹{product.price}
+                </h4>
+
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/products/${product._id}`
+                    )
+                  }
+                  className="
+                    mt-3
+                    bg-red-600
+                    hover:bg-red-700
+                    text-white
+                    px-5
+                    py-2.5
+                    rounded-xl
+                    font-semibold
+                    transition
+                  "
+                >
+                  View Product
+                </button>
+
+              </div>
+
+            </div>
+
+          )
+        )}
+
+      </div>
+
+    </section>
+  );
+}
