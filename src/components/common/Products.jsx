@@ -108,6 +108,7 @@ export default function Products() {
       stock: "",
       brand: "",
       category: "",
+      description: "",
       isBestSeller: false,
       image: null
     });
@@ -374,6 +375,35 @@ export default function Products() {
     resize-none
   "
               />
+              <div className="flex items-center gap-3">
+  <input
+    type="checkbox"
+    id="isBestSeller"
+    checked={formData.isBestSeller}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        isBestSeller: e.target.checked,
+      })
+    }
+    className="
+      w-5 h-5
+      accent-green-600
+      cursor-pointer
+    "
+  />
+
+  <label
+    htmlFor="isBestSeller"
+    className="
+      font-medium
+      text-gray-700
+      cursor-pointer
+    "
+  >
+    ⭐ Mark as Best Seller
+  </label>
+</div>
               <input
                 type="file"
                 name="image"
