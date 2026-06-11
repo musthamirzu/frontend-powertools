@@ -32,9 +32,8 @@ export default function Products() {
     stock: "",
     brand: "",
     category: category || "",
-
     description: "",
-    isBestSeller: false,
+    tag: "",
     image: null
   });
   useEffect(() => {
@@ -109,7 +108,7 @@ export default function Products() {
       brand: "",
       category: "",
       description: "",
-      isBestSeller: false,
+      tag: "",
       image: null
     });
 
@@ -134,7 +133,7 @@ export default function Products() {
       brand: product.brand,
       description: product.description || "",
       category: product.category?.slug || "",
-      isBestSeller: product.isBestSeller || false,
+      tag: product.tag || "",
       image: null
     });
 
@@ -162,14 +161,14 @@ export default function Products() {
       data.append("brand", formData.brand);
       data.append("category", formData.category);
       data.append(
-        "isBestSeller",
-        formData.isBestSeller
+        "tag",
+        formData.tag
       );
       data.append(
         "description",
         formData.description
       );
-      
+
 
       if (formData.image) {
         data.append("image", formData.image);
@@ -376,34 +375,33 @@ export default function Products() {
   "
               />
               <div className="flex items-center gap-3">
-  <input
-    type="checkbox"
-    id="isBestSeller"
-    checked={formData.isBestSeller}
-    onChange={(e) =>
-      setFormData({
-        ...formData,
-        isBestSeller: e.target.checked,
-      })
-    }
-    className="
-      w-5 h-5
-      accent-green-600
-      cursor-pointer
-    "
-  />
+                <select
+                  name="tag"
+                  value={formData.tag}
+                  onChange={handleChange}
+                  className="w-full border p-3 rounded"
+                >
+                  <option value="">
+                    Select Tag
+                  </option>
 
-  <label
-    htmlFor="isBestSeller"
-    className="
-      font-medium
-      text-gray-700
-      cursor-pointer
-    "
-  >
-    ⭐ Mark as Best Seller
-  </label>
-</div>
+                  <option value="BEST_SELLER">
+                    Best Seller
+                  </option>
+
+                  <option value="NEW_ARRIVAL">
+                    New Arrival
+                  </option>
+
+                  <option value="TRENDING">
+                    Trending
+                  </option>
+
+                  <option value="FEATURED">
+                    Featured
+                  </option>
+                </select>
+              </div>
               <input
                 type="file"
                 name="image"
