@@ -1,15 +1,10 @@
+
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
 
-export default function BestSellers() {
+const BestSellers = () => {
   const [products, setProducts] =
     useState([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBestSellers();
@@ -32,226 +27,77 @@ export default function BestSellers() {
 
         console.log(err);
 
-      } finally {
-
-        setLoading(false);
-
       }
     };
-
-  if (loading) {
-    return (
-      <div className="py-20 text-center">
-        Loading Best Sellers...
-      </div>
-    );
-  }
-
-  if (products.length === 0) {
-    return null;
-  }
-
+const BestSellers = () => {
   return (
-    <section className="bg-gray-100 py-14 px-4 md:px-20">
+    <div className="bg-gray-100 py-12 px-4 md:px-20">
+   
+      <h2 className="text-4xl font-semibold text-center mb-10">
+        Best Sellers
+      </h2>
 
-      <div className="text-center mb-12">
+      <div className="space-y-6">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border"
+          >
+            {/* LEFT SECTION */}
+            <div className="flex items-center gap-4">
+             <img
+  src={
+    product.image
+      ? product.image.startsWith("http")
+        ? product.image
+        : `http://localhost:5004/${product.image}`
+      : "https://via.placeholder.com/150"
+  }
+  alt={product.name}
+  className="w-16 h-16 object-contain"
+/>
 
-        <span
-          className="
-            text-red-600
-            font-semibold
-            uppercase
-            tracking-widest
-          "
-        >
-          Top Picks
-        </span>
-
-        <h2
-          className="
-            text-4xl
-            md:text-5xl
-            font-black
-            mt-2
-          "
-        >
-          Best Sellers
-        </h2>
-
-        <p className="text-gray-500 mt-3">
-          Most popular products chosen by our customers
-        </p>
-
-      </div>
-
-      <div className="space-y-5">
-
-        {products.map(
-          (product) => (
-
-            <div
-              key={product._id}
-              className="
-                bg-white
-                rounded-2xl
-                shadow-md
-                hover:shadow-xl
-                transition-all
-                duration-300
-                border
-                border-gray-100
-                p-4
-                flex
-                flex-col
-                md:flex-row
-                md:items-center
-                md:justify-between
-                gap-4
-              "
-            >
-
-              {/* LEFT */}
-              <div
-                className="
-                  flex
-                  items-center
-                  gap-4
-                "
-              >
-
-                <div
-                  className="
-                    relative
-                    w-24
-                    h-24
-                    bg-gray-50
-                    rounded-xl
-                    overflow-hidden
-                  "
+              <div>
+                {/* TAG */}
+                <span
+                  className={`text-xs px-2 py-1 rounded text-white ${
+                    product.tag === "BEST SELLER"
+                      ? "bg-green-500"
+                      : "bg-orange-500"
+                  }`}
                 >
+                  {product.tag}
+                </span>
 
-                  <img
-                    src={
-                      product.image
-                    }
-                    alt={
-                      product.name
-                    }
-                    className="
-                      w-full
-                      h-full
-                      object-contain
-                      p-2
-                    "
-                  />
-
-                  <span
-                    className="
-                      absolute
-                      top-2
-                      left-2
-                      bg-green-500
-                      text-white
-                      text-[10px]
-                      px-2
-                      py-1
-                      rounded-full
-                      font-bold
-                    "
-                  >
-                    BEST SELLER
-                  </span>
-
-                </div>
-
-                <div>
-
-                  <h3
-                    className="
-                      font-bold
-                      text-lg
-                      text-gray-800
-                    "
-                  >
-                    {product.name}
-                  </h3>
-
-                  <p
-                    className="
-                      text-sm
-                      text-gray-500
-                      mt-1
-                    "
-                  >
-                    {product.brand}
-                  </p>
-
-                  <p
-                    className="
-                      text-sm
-                      text-gray-400
-                      mt-1
-                    "
-                  >
-                    Stock:
-                    {" "}
-                    {product.stock}
-                  </p>
-
-                </div>
-
+                {/* NAME */}
+                <p className="text-gray-700 mt-2 text-sm md:text-base">
+                  {product.name}
+                </p>
               </div>
-
-              {/* RIGHT */}
-              <div
-                className="
-                  flex
-                  flex-col
-                  items-start
-                  md:items-end
-                "
-              >
-
-                <h4
-                  className="
-                    text-2xl
-                    font-black
-                    text-green-600
-                  "
-                >
-                  ₹{product.price}
-                </h4>
-
-                <button
-                  onClick={() =>
-                    navigate(
-                      `/products/${product._id}`
-                    )
-                  }
-                  className="
-                    mt-3
-                    bg-red-600
-                    hover:bg-red-700
-                    text-white
-                    px-5
-                    py-2.5
-                    rounded-xl
-                    font-semibold
-                    transition
-                  "
-                >
-                  View Product
-                </button>
-
-              </div>
-
             </div>
 
-          )
-        )}
+            {/* RIGHT SECTION */}
+            <div className="text-right">
+              {/* OLD PRICE */}
+              <p className="text-gray-400 text-sm">
+  Brand: {product.brand}
+</p>
 
+              {/* NEW PRICE */}
+              <p className="text-lg font-semibold text-gray-800">
+  ₹{Number(product.price).toFixed(2)}
+</p>
+
+              {/* BUTTON */}
+              <button className="mt-2 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md text-sm">
+                Buy Now
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
-
-    </section>
+    </div>
   );
+};
 }
+export default BestSellers;
