@@ -32,7 +32,9 @@ export default function Products() {
     stock: "",
     brand: "",
     category: category || "",
+
     description: "",
+    isBestSeller: false,
     image: null
   });
   useEffect(() => {
@@ -106,6 +108,7 @@ export default function Products() {
       stock: "",
       brand: "",
       category: "",
+      isBestSeller: false,
       image: null
     });
 
@@ -130,6 +133,7 @@ export default function Products() {
       brand: product.brand,
       description: product.description || "",
       category: product.category?.slug || "",
+      isBestSeller: product.isBestSeller || false,
       image: null
     });
 
@@ -157,9 +161,14 @@ export default function Products() {
       data.append("brand", formData.brand);
       data.append("category", formData.category);
       data.append(
+        "isBestSeller",
+        formData.isBestSeller
+      );
+      data.append(
         "description",
         formData.description
       );
+      
 
       if (formData.image) {
         data.append("image", formData.image);
@@ -761,15 +770,15 @@ active:scale-105
       </div>
       {selectedProduct && (
 
-  <div className="
+        <div className="
     fixed inset-0 z-50
     bg-black/60 backdrop-blur-sm
     flex items-center justify-center
     p-4
   ">
 
-    {/* MODAL */}
-    <div className="
+          {/* MODAL */}
+          <div className="
       relative
       bg-white
       w-full
@@ -782,12 +791,12 @@ active:scale-105
       overflow-y-auto
     ">
 
-      {/* CLOSE BUTTON */}
-      <button
-        onClick={() =>
-          setSelectedProduct(null)
-        }
-        className="
+            {/* CLOSE BUTTON */}
+            <button
+              onClick={() =>
+                setSelectedProduct(null)
+              }
+              className="
           absolute top-4 right-4
           z-50
           w-10 h-10
@@ -800,17 +809,17 @@ active:scale-105
           hover:text-white
           transition-all duration-300
         "
-      >
-        ✕
-      </button>
+            >
+              ✕
+            </button>
 
-      <div className="
+            <div className="
         grid grid-cols-1
         md:grid-cols-2
       ">
 
-        {/* IMAGE SECTION */}
-        <div className="
+              {/* IMAGE SECTION */}
+              <div className="
           bg-gradient-to-br
           from-gray-100 to-gray-200
           flex items-center justify-center
@@ -819,16 +828,16 @@ active:scale-105
           md:min-h-full
         ">
 
-          <img
-            src={
-              selectedProduct.image
-                ? selectedProduct.image.startsWith("http")
-                  ? selectedProduct.image
-                  : `http://localhost:5000/${selectedProduct.image}`
-                : "https://via.placeholder.com/500"
-            }
-            alt={selectedProduct.name}
-            className="
+                <img
+                  src={
+                    selectedProduct.image
+                      ? selectedProduct.image.startsWith("http")
+                        ? selectedProduct.image
+                        : `http://localhost:5000/${selectedProduct.image}`
+                      : "https://via.placeholder.com/500"
+                  }
+                  alt={selectedProduct.name}
+                  className="
               w-full
               max-w-[280px]
               sm:max-w-[340px]
@@ -837,17 +846,17 @@ active:scale-105
               hover:scale-105
               transition duration-500
             "
-          />
-        </div>
+                />
+              </div>
 
-        {/* DETAILS */}
-        <div className="
+              {/* DETAILS */}
+              <div className="
           p-5 sm:p-7 md:p-8
           flex flex-col
         ">
 
-          {/* BADGE */}
-          <div className="
+                {/* BADGE */}
+                <div className="
             w-fit
             bg-gray-100
             text-gray-700
@@ -858,41 +867,41 @@ active:scale-105
             uppercase
             tracking-widest
           ">
-            Premium Tool
-          </div>
+                  Premium Tool
+                </div>
 
-          {/* TITLE */}
-          <h1 className="
+                {/* TITLE */}
+                <h1 className="
             mt-4
             text-2xl sm:text-3xl
             font-extrabold
             text-gray-900
             leading-tight
           ">
-            {selectedProduct.name}
-          </h1>
+                  {selectedProduct.name}
+                </h1>
 
-          {/* BRAND */}
-          <div className="
+                {/* BRAND */}
+                <div className="
             mt-3
             flex items-center gap-2
             text-gray-600
           ">
-            <span className="
+                  <span className="
               font-medium
             ">
-              Brand:
-            </span>
+                    Brand:
+                  </span>
 
-            <span className="
+                  <span className="
               font-bold text-black
             ">
-              {selectedProduct.brand}
-            </span>
-          </div>
+                    {selectedProduct.brand}
+                  </span>
+                </div>
 
-          {/* PRICE + STOCK */}
-          <div className="
+                {/* PRICE + STOCK */}
+                <div className="
             mt-6
             flex items-center
             justify-between
@@ -900,78 +909,77 @@ active:scale-105
             flex-wrap
           ">
 
-            <h2 className="
+                  <h2 className="
               text-3xl sm:text-4xl
               font-extrabold
               text-black
             ">
-              ₹{selectedProduct.price}
-            </h2>
+                    ₹{selectedProduct.price}
+                  </h2>
 
-            <span className={`
+                  <span className={`
               px-4 py-2
               rounded-full
               text-sm font-semibold
 
-              ${
-                selectedProduct.stock > 0
-                  ? `
+              ${selectedProduct.stock > 0
+                      ? `
                     bg-green-100
                     text-green-700
                   `
-                  : `
+                      : `
                     bg-red-100
                     text-red-700
                   `
-              }
+                    }
             `}>
-              {selectedProduct.stock > 0
-                ? "In Stock"
-                : "Out OfStock"}
-            </span>
-          </div>
+                    {selectedProduct.stock > 0
+                      ? "In Stock"
+                      : "Out OfStock"}
+                  </span>
+                </div>
 
-          {/* DESCRIPTION */}
-          <div className="
+                {/* DESCRIPTION */}
+                <div className="
             mt-7
           ">
 
-            <h3 className="
+                  <h3 className="
               text-lg sm:text-xl
               font-bold
               text-gray-900
               mb-3
             ">
-              Product Overview
-            </h3>
+                    Product Overview
+                  </h3>
 
-            <p className="
+                  <p className="
               text-gray-600
               text-sm sm:text-base
               leading-7
             ">
-              {selectedProduct.description ||
-                "Professional-grade industrial power tool engineered for precision, durability, and high-performance industrial usage."}
-            </p>
-          </div>
+                    {selectedProduct.description ||
+                      "Professional-grade industrial power tool engineered for precision, durability, and high-performance industrial usage."}
+                  </p>
+                </div>
 
-          {/* FEATURES */}
-          <div className="
+                {/* FEATURES */}
+                <div className="
             mt-7
             grid grid-cols-2
             gap-3
           ">
 
-            {[
-              "⚡ High Performance",
-              "🔧 Durable Build",
-              "🚚 Fast Delivery",
-              "🛡 Warranty"
-            ].map((feature) => (
+                  {[
+                    "⚡ High Performance",
+                    "🔧 Durable Build",
+                    "🚚 Fast Delivery",
+                    "🛡 Warranty"
+                  ].map((feature) => (
 
-              <div
-                key={feature}
-                className="
+                    <div
+                      key={feature}
+                      className="
                   bg-gray-100
                   rounded-2xl
                   py-3 px-2
@@ -980,27 +988,27 @@ active:scale-105
                   font-medium
                   text-gray-700
                 "
-              >
-                {feature}
-              </div>
-            ))}
-          </div>
+                    >
+                      {feature}
+                    </div>
+                  ))}
+                </div>
 
-          {/* ACTIONS */}
-          <div className="
+                {/* ACTIONS */}
+                <div className="
             mt-8
             flex items-center
             gap-3
           ">
 
-            {/* ADD TO CART */}
-            <button
-              onClick={() =>
-                toggleCart(
-                  selectedProduct._id
-                )
-              }
-              className={`
+                  {/* ADD TO CART */}
+                  <button
+                    onClick={() =>
+                      toggleCart(
+                        selectedProduct._id
+                      )
+                    }
+                    className={`
                 flex-1
                 h-14
                 rounded-2xl
@@ -1009,35 +1017,34 @@ active:scale-105
                 transition-all duration-300
                 active:scale-95
 
-                ${
-                  cartItems.includes(
-                    selectedProduct._id
-                  )
-                    ? `
+                ${cartItems.includes(
+                      selectedProduct._id
+                    )
+                        ? `
                       bg-green-500
                       hover:bg-green-600
                       text-white
                     `
-                    : `
+                        : `
                       bg-black
                       hover:bg-gray-900
                       text-white
                     `
-                }
+                      }
               `}
-            >
+                  >
 
-              {cartItems.includes(
-                selectedProduct._id
-              )
-                ? "✅ Added"
-                : "🛒 Add to Cart"}
+                    {cartItems.includes(
+                      selectedProduct._id
+                    )
+                      ? "✅ Added"
+                      : "🛒 Add to Cart"}
 
-            </button>
+                  </button>
 
-            {/* WISHLIST */}
-            <button
-              className="
+                  {/* WISHLIST */}
+                  <button
+                    className="
                 w-14 h-14
                 rounded-2xl
                 border border-gray-200
@@ -1047,15 +1054,15 @@ active:scale-105
                 transition
                 shrink-0
               "
-            >
-              ❤️
-            </button>
+                  >
+                    ❤️
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </>
   );
 }
