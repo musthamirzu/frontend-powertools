@@ -12,17 +12,17 @@ export default function Checkout() {
     useState("COD");
   const [loading, setLoading] =
     useState(false);
-   const [showAddressModal, setShowAddressModal] =
-  useState(false);
+  const [showAddressModal, setShowAddressModal] =
+    useState(false);
 
-const [addressForm, setAddressForm] =
-  useState({
-    name: "",
-    mobile: "",
-    address: "",
-    district: "",
-    state: "",
-  });
+  const [addressForm, setAddressForm] =
+    useState({
+      name: "",
+      mobile: "",
+      address: "",
+      district: "",
+      state: "",
+    });
   useEffect(() => {
     fetchData();
   }, []);
@@ -33,13 +33,13 @@ const [addressForm, setAddressForm] =
       const userRes = await API.get("/user/me");
       setUser(userRes.data);
 
-setAddressForm({
-  name: userRes.data.name || "",
-  mobile: userRes.data.mobile || "",
-  address: userRes.data.address || "",
-  district: userRes.data.district || "",
-  state: userRes.data.state || "",
-});
+      setAddressForm({
+        name: userRes.data.name || "",
+        mobile: userRes.data.mobile || "",
+        address: userRes.data.address || "",
+        district: userRes.data.district || "",
+        state: userRes.data.state || "",
+      });
       setCart(cartRes.data.items || []);
       setUser(userRes.data);
     } catch (err) {
@@ -62,14 +62,14 @@ setAddressForm({
   const total =
     subtotal + delivery + gst;
 
-const saveDeliveryAddress = () => {
-  setShowAddressModal(false);
+  const saveDeliveryAddress = () => {
+    setShowAddressModal(false);
 
-  console.log(
-    "Updated Delivery Address",
-    addressForm
-  );
-};
+    console.log(
+      "Updated Delivery Address",
+      addressForm
+    );
+  };
 
   const placeOrder = async () => {
     try {
@@ -77,17 +77,17 @@ const saveDeliveryAddress = () => {
 
       await API.post("/orders/place", {
 
-  paymentMethod,
+        paymentMethod,
 
-  deliveryAddress: {
-    name: addressForm.name,
-    mobile: addressForm.mobile,
-    address: addressForm.address,
-    district: addressForm.district,
-    state: addressForm.state,
-  },
+        deliveryAddress: {
+          name: addressForm.name,
+          mobile: addressForm.mobile,
+          address: addressForm.address,
+          district: addressForm.district,
+          state: addressForm.state,
+        },
 
-});
+      });
 
       alert(
         "Order Placed Successfully ✅"
@@ -97,7 +97,7 @@ const saveDeliveryAddress = () => {
     } catch (err) {
       alert(
         err.response?.data?.msg ||
-          "Order Failed"
+        "Order Failed"
       );
     } finally {
       setLoading(false);
@@ -238,13 +238,13 @@ const saveDeliveryAddress = () => {
 
                 <div className="flex justify-between items-center mb-5">
 
-  <h2 className="text-2xl font-bold">
-    📍 Delivery Address
-  </h2>
+                  <h2 className="text-2xl font-bold">
+                    📍 Delivery Address
+                  </h2>
 
-  <button
-    onClick={() => setShowAddressModal(true)}
-    className="
+                  <button
+                    onClick={() => setShowAddressModal(true)}
+                    className="
       bg-black
       text-white
       px-4
@@ -253,32 +253,32 @@ const saveDeliveryAddress = () => {
       hover:bg-gray-800
       transition
     "
-  >
-    ✏️ Edit
-  </button>
+                  >
+                    ✏️ Edit
+                  </button>
 
-</div>
+                </div>
 
                 {user && (
-                <div className="bg-slate-50 rounded-2xl p-5 border">
+                  <div className="bg-slate-50 rounded-2xl p-5 border">
 
-  <h3 className="font-bold text-xl mb-2">
-    {addressForm.name}
-  </h3>
+                    <h3 className="font-bold text-xl mb-2">
+                      {addressForm.name}
+                    </h3>
 
-  <p className="text-gray-600">
-    📞 {addressForm.mobile}
-  </p>
+                    <p className="text-gray-600">
+                      📞 {addressForm.mobile}
+                    </p>
 
-  <p className="text-gray-700 mt-2 break-words">
-    📍 {addressForm.address},
-    {" "}
-    {addressForm.district},
-    {" "}
-    {addressForm.state}
-  </p>
+                    <p className="text-gray-700 mt-2 break-words">
+                      📍 {addressForm.address},
+                      {" "}
+                      {addressForm.district},
+                      {" "}
+                      {addressForm.state}
+                    </p>
 
-</div>
+                  </div>
                 )}
 
               </div>
@@ -305,11 +305,10 @@ const saveDeliveryAddress = () => {
                       p-6
                       border-2
                       transition
-                      ${
-                        paymentMethod ===
+                      ${paymentMethod ===
                         "UPI"
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200"
+                        ? "border-green-500 bg-green-50"
+                        : "border-gray-200"
                       }
                     `}
                   >
@@ -340,11 +339,10 @@ const saveDeliveryAddress = () => {
                       p-6
                       border-2
                       transition
-                      ${
-                        paymentMethod ===
+                      ${paymentMethod ===
                         "COD"
-                          ? "border-black bg-gray-100"
-                          : "border-gray-200"
+                        ? "border-black bg-gray-100"
+                        : "border-gray-200"
                       }
                     `}
                   >
@@ -374,11 +372,10 @@ const saveDeliveryAddress = () => {
                       p-6
                       border-2
                       transition
-                      ${
-                        paymentMethod ===
+                      ${paymentMethod ===
                         "CARD"
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200"
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200"
                       }
                     `}
                   >
@@ -414,7 +411,7 @@ const saveDeliveryAddress = () => {
                       key={
                         item.productId._id
                       }
-                     className="
+                      className="
                        
     bg-gray-50
     rounded-3xl
@@ -604,8 +601,8 @@ const saveDeliveryAddress = () => {
 
       {showAddressModal && (
 
-  <div
-    className="
+        <div
+          className="
       fixed
       inset-0
       bg-black/50
@@ -615,10 +612,10 @@ const saveDeliveryAddress = () => {
       z-50
       p-4
     "
-  >
+        >
 
-    <div
-      className="
+          <div
+            className="
         bg-white
         rounded-3xl
         shadow-2xl
@@ -626,142 +623,142 @@ const saveDeliveryAddress = () => {
         max-w-xl
         p-6
       "
-    >
+          >
 
-      <div className="flex justify-between mb-6">
+            <div className="flex justify-between mb-6">
 
-        <h2 className="text-2xl font-bold">
-          Edit Delivery Address
-        </h2>
+              <h2 className="text-2xl font-bold">
+                Edit Delivery Address
+              </h2>
 
-        <button
-          onClick={() =>
-            setShowAddressModal(false)
-          }
-          className="
+              <button
+                onClick={() =>
+                  setShowAddressModal(false)
+                }
+                className="
             text-gray-500
             text-xl
           "
-        >
-          ✕
-        </button>
+              >
+                ✕
+              </button>
 
-      </div>
+            </div>
 
-      <div className="space-y-4">
+            <div className="space-y-4">
 
-        <input
-          type="text"
-          placeholder="Mobile Number"
-          value={addressForm.mobile}
-          onChange={(e) =>
-            setAddressForm({
-              ...addressForm,
-              mobile: e.target.value,
-            })
-          }
-          className="
+              <input
+                type="text"
+                placeholder="Mobile Number"
+                value={addressForm.mobile}
+                onChange={(e) =>
+                  setAddressForm({
+                    ...addressForm,
+                    mobile: e.target.value,
+                  })
+                }
+                className="
             w-full
             border
             rounded-xl
             p-3
           "
-        />
+              />
 
-        <textarea
-          rows="3"
-          placeholder="Address"
-          value={addressForm.address}
-          onChange={(e) =>
-            setAddressForm({
-              ...addressForm,
-              address: e.target.value,
-            })
-          }
-          className="
+              <textarea
+                rows="3"
+                placeholder="Address"
+                value={addressForm.address}
+                onChange={(e) =>
+                  setAddressForm({
+                    ...addressForm,
+                    address: e.target.value,
+                  })
+                }
+                className="
             w-full
             border
             rounded-xl
             p-3
           "
-        />
+              />
 
-        <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
 
-          <input
-            type="text"
-            placeholder="District"
-            value={addressForm.district}
-            onChange={(e) =>
-              setAddressForm({
-                ...addressForm,
-                district: e.target.value,
-              })
-            }
-            className="
+                <input
+                  type="text"
+                  placeholder="District"
+                  value={addressForm.district}
+                  onChange={(e) =>
+                    setAddressForm({
+                      ...addressForm,
+                      district: e.target.value,
+                    })
+                  }
+                  className="
               border
               rounded-xl
               p-3
             "
-          />
+                />
 
-          <input
-            type="text"
-            placeholder="State"
-            value={addressForm.state}
-            onChange={(e) =>
-              setAddressForm({
-                ...addressForm,
-                state: e.target.value,
-              })
-            }
-            className="
+                <input
+                  type="text"
+                  placeholder="State"
+                  value={addressForm.state}
+                  onChange={(e) =>
+                    setAddressForm({
+                      ...addressForm,
+                      state: e.target.value,
+                    })
+                  }
+                  className="
               border
               rounded-xl
               p-3
             "
-          />
+                />
 
-        </div>
+              </div>
 
-      </div>
+            </div>
 
-      <div className="flex gap-3 mt-6">
+            <div className="flex gap-3 mt-6">
 
-        <button
-          onClick={() =>
-            setShowAddressModal(false)
-          }
-          className="
+              <button
+                onClick={() =>
+                  setShowAddressModal(false)
+                }
+                className="
             flex-1
             border
             py-3
             rounded-xl
           "
-        >
-          Cancel
-        </button>
+              >
+                Cancel
+              </button>
 
-        <button
-          onClick={saveDeliveryAddress}
-          className="
+              <button
+                onClick={saveDeliveryAddress}
+                className="
             flex-1
             bg-black
             text-white
             py-3
             rounded-xl
           "
-        >
-          Save Address
-        </button>
+              >
+                Save Address
+              </button>
 
-      </div>
+            </div>
 
-    </div>
+          </div>
 
-  </div>
+        </div>
 
-)}
+      )}
     </>
   );
 }

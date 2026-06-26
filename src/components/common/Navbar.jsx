@@ -8,25 +8,46 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import ProfilePopup from "./ProfilePopup";
+import API from "../../services/api";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const [mobileShopOpen, setMobileShopOpen] =
-  useState(false);
+  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+  const [menuData, setMenuData] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [submenuTop, setSubmenuTop] = useState(0);
   const popupRef = useRef();
+  const closeTimeout = useRef();
   const navigate = useNavigate();
 
   useEffect(() => {
-  console.log("Stored User:", user);
-}, [user]);
+    console.log("Stored User:", user);
+  }, [user]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const res = await API.get("/categories/menu");
+
+      setMenuData(res.data);
+      
+
+      if (res.data.length) {
+        setActiveCategory(null);
+      }
+    };
+
+    fetchMenu();
+    
+  }, []);
+
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -52,6 +73,11 @@ export default function Navbar() {
     setMenuOpen(false); // close mobile menu
   };
 
+  const closeShopMenu = () => {
+  setShopOpen(false);
+  setActiveCategory(null);
+  setSubmenuTop(0);
+};
   return (
     <div className="bg-white border-b shadow-sm">
 
@@ -78,7 +104,7 @@ export default function Navbar() {
         <div className="flex items-center gap-4 relative" ref={popupRef}>
           {user ? (
             <div
-             
+
               className="hidden md:flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg text-sm cursor-pointer"
             >
               <span className="w-6 h-6 bg-white text-black rounded-full flex items-center justify-center text-xs font-bold">
@@ -132,47 +158,102 @@ export default function Navbar() {
           </span>
 
           <div
-            className="relative"
-            onMouseEnter={() => setShopOpen(true)}
-            onMouseLeave={() => setShopOpen(false)}
+            className="relative flex items-center"
+            onMouseEnter={() => {
+              clearTimeout(closeTimeout.current);
+              setShopOpen(true);
+            }}
+            onMouseLeave={() => {
+  closeTimeout.current = setTimeout(() => {
+    closeShopMenu();
+  }, 250);
+}}
           >
-            <span className="cursor-pointer hover:text-teal-600">
+
+            <button
+              className="cursor-pointer hover:text-teal-600 font-medium"
+            >
               SHOP
-            </span>
+            </button>
+
 
             {shopOpen && (
-              <div className="absolute top-6 left-0 bg-white shadow-lg rounded-lg w-56 py-2 z-50 border">
 
-                <div
-                  onClick={() => navigate("/products")}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  View All
+              <div className="absolute top-8 left-0 flex z-50">
+
+                {/* LEFT PANEL */}
+
+                <div className="w-72 bg-white shadow-xl rounded-l-xl border">
+
+                  <div
+                    className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => navigate("/products")}
+                  >
+                    View All
+                  </div>
+
+                  {menuData.map((cat, index) => (
+                   <div
+  key={cat._id}
+  onMouseEnter={() => {
+    setActiveCategory(cat);
+    setSubmenuTop(index * 48);
+  }}
+  onClick={() => {
+  closeShopMenu();
+  navigate(`/products/${cat.slug}`);
+}}
+  className={`
+    flex
+    justify-between
+    items-center
+    px-5
+    py-3
+    cursor-pointer
+    transition
+    ${
+      activeCategory?._id === cat._id
+        ? "bg-gray-100"
+        : "hover:bg-gray-50"
+    }
+  `}
+>
+  <span>{cat.name}</span>
+
+  {cat.children.length > 0 && (
+    <span>›</span>
+  )}
+</div>
+                  ))}
+
                 </div>
 
-                <div
-                  onClick={() => navigate("/products/power-tools")}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Power Tools
-                </div>
+                {/* RIGHT PANEL */}
 
-                <div
-                  onClick={() => navigate("/products/power-tools-accessories")}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Power Tools Accessories
-                </div>
-
-                <div
-                  onClick={() => navigate("/products/hand-tools")}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                >
-                  Hand Tools
-                </div>
+                {activeCategory && activeCategory.children.length > 0 && (
+  <div
+    className="absolute left-full w-80 bg-white shadow-xl rounded-r-xl border"
+    style={{ top: submenuTop }}
+  >
+    {activeCategory.children.map(sub => (
+      <div
+        key={sub._id}
+        onClick={() => {
+  closeShopMenu();
+  navigate(`/products/${sub.slug}`);
+}}
+        className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
+      >
+        {sub.name}
+      </div>
+    ))}
+  </div>
+)}
 
               </div>
+
             )}
+
           </div>
 
           {/* ✅ FIXED */}
@@ -190,9 +271,9 @@ export default function Navbar() {
       </div>
 
       {/* MOBILE MENU */}
-     {menuOpen && (
-  <div
-    className="
+      {menuOpen && (
+        <div
+          className="
       md:hidden
       bg-white
       border-t
@@ -200,11 +281,11 @@ export default function Navbar() {
       px-5
       py-4
     "
-  >
-    {/* Search */}
-    <input
-      placeholder="Search Products..."
-      className="
+        >
+          {/* Search */}
+          <input
+            placeholder="Search Products..."
+            className="
         w-full
         px-4
         py-3
@@ -213,33 +294,33 @@ export default function Navbar() {
         border
         mb-5
       "
-    />
+          />
 
-    {/* Menu Items */}
-    <div className="flex flex-col gap-4">
+          {/* Menu Items */}
+          <div className="flex flex-col gap-4">
 
-      <button
-        onClick={() => scrollToSection("about")}
-        className="
+            <button
+              onClick={() => scrollToSection("about")}
+              className="
           text-left
           font-medium
           py-2
           border-b
         "
-      >
-        ABOUT US
-      </button>
+            >
+              ABOUT US
+            </button>
 
-      {/* Mobile Shop */}
-      <div>
+            {/* Mobile Shop */}
+            <div>
 
-        <button
-          onClick={() =>
-            setMobileShopOpen(
-              !mobileShopOpen
-            )
-          }
-          className="
+              <button
+                onClick={() =>
+                  setMobileShopOpen(
+                    !mobileShopOpen
+                  )
+                }
+                className="
             w-full
             flex
             justify-between
@@ -248,129 +329,129 @@ export default function Navbar() {
             py-2
             border-b
           "
-        >
-          <span>SHOP</span>
+              >
+                <span>SHOP</span>
 
-          <span>
-            {mobileShopOpen
-              ? "−"
-              : "+"}
-          </span>
-        </button>
+                <span>
+                  {mobileShopOpen
+                    ? "−"
+                    : "+"}
+                </span>
+              </button>
 
-        {mobileShopOpen && (
-          <div
-            className="
+              {mobileShopOpen && (
+                <div
+                  className="
               mt-2
               ml-3
               bg-gray-50
               rounded-xl
               overflow-hidden
             "
-          >
+                >
 
-            <div
-              onClick={() => {
-                navigate("/products");
-                setMenuOpen(false);
-              }}
-              className="
+                  <div
+                    onClick={() => {
+                      navigate("/products");
+                      setMenuOpen(false);
+                    }}
+                    className="
                 px-4
                 py-3
                 border-b
                 cursor-pointer
               "
-            >
-              View All
-            </div>
+                  >
+                    View All
+                  </div>
 
-            <div
-              onClick={() => {
-                navigate(
-                  "/products/power-tools"
-                );
-                setMenuOpen(false);
-              }}
-              className="
+                  <div
+                    onClick={() => {
+                      navigate(
+                        "/products/power-tools"
+                      );
+                      setMenuOpen(false);
+                    }}
+                    className="
                 px-4
                 py-3
                 border-b
                 cursor-pointer
               "
-            >
-              Power Tools
-            </div>
+                  >
+                    Power Tools
+                  </div>
 
-            <div
-              onClick={() => {
-                navigate(
-                  "/products/power-tools-accessories"
-                );
-                setMenuOpen(false);
-              }}
-              className="
+                  <div
+                    onClick={() => {
+                      navigate(
+                        "/products/power-tools-accessories"
+                      );
+                      setMenuOpen(false);
+                    }}
+                    className="
                 px-4
                 py-3
                 border-b
                 cursor-pointer
               "
-            >
-              Power Tools Accessories
-            </div>
+                  >
+                    Power Tools Accessories
+                  </div>
 
-            <div
-              onClick={() => {
-                navigate(
-                  "/products/hand-tools"
-                );
-                setMenuOpen(false);
-              }}
-              className="
+                  <div
+                    onClick={() => {
+                      navigate(
+                        "/products/hand-tools"
+                      );
+                      setMenuOpen(false);
+                    }}
+                    className="
                 px-4
                 py-3
                 cursor-pointer
               "
-            >
-              Hand Tools
+                  >
+                    Hand Tools
+                  </div>
+
+                </div>
+              )}
+
             </div>
 
-          </div>
-        )}
-
-      </div>
-
-      <button
-        onClick={() =>
-          scrollToSection("contact")
-        }
-        className="
+            <button
+              onClick={() =>
+                scrollToSection("contact")
+              }
+              className="
           text-left
           font-medium
           py-2
           border-b
         "
-      >
-        CONTACT US
-      </button>
+            >
+              CONTACT US
+            </button>
 
-    </div>
+          </div>
 
-    {/* Contact Info */}
-    <div
-      className="
+          {/* Contact Info */}
+          <div
+            className="
         mt-5
         text-sm
         text-gray-500
         border-t
         pt-4
       "
-    >
-      <p>📞 +91 7402471678</p>
-      <p>✉️ info@nptpowertools.in</p>
-    </div>
+          >
+            <p>📞 +91 7402471678</p>
+            <p>✉️ info@nptpowertools.in</p>
+          </div>
 
-  </div>
-)}
+        </div>
+      )}
     </div>
   );
 }

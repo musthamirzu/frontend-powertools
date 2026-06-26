@@ -10,13 +10,14 @@ export default function Products() {
   const isAdmin = user?.role === "admin";
   const [showModal, setShowModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
-
+  const [editingCategory, setEditingCategory] = useState(null);
   const [categoryData, setCategoryData] = useState({
     name: "",
     slug: "",
     parent: "",
     image: null
   });
+  const [editingSubCategory, setEditingSubCategory] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -115,6 +116,21 @@ export default function Products() {
     setShowModal(true);
   };
 
+  const openCategoryEdit = (category) => {
+    console.log("openCategoryEdit", category);
+    setEditingCategory(category);
+
+
+    setCategoryData({
+      name: category.name,
+      slug: category.slug,
+      parent: category.parent?._id || "",
+      image: null,
+    });
+
+    setShowCategoryModal(true);
+  };
+
   const handleCategoryChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -138,6 +154,18 @@ export default function Products() {
     });
 
     setShowModal(true);
+  };
+
+  const openSubCategoryEdit = (sub) => {
+    setEditingSubCategory(sub);
+
+    setCategoryData({
+      name: sub.name,
+      slug: sub.slug,
+      image: null,
+    });
+
+    setShowCategoryModal(true);
   };
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -214,16 +242,51 @@ export default function Products() {
       if (categoryData.image) {
         data.append("image", categoryData.image);
       }
+      const editingItem = editingCategory || editingSubCategory;
 
-      await API.post("/categories/create", data);
+      if (editingItem) {
+        await API.put(
+          `/categories/${editingItem._id}`,
+          formData
+        );
+      } else {
+        await API.post(
+          "/categories/create",
+          formData
+        );
+      }
+
+      if (editingCategory) {
+        await API.put(
+          `/categories/${editingCategory.id}`,
+          data
+        );
+      } else {
+        await API.post(
+          "/categories/create",
+          data
+        );
+      }
 
       alert("Category created");
 
       setShowCategoryModal(false);
 
+      setEditingCategory(null);
+
+      setCategoryData({
+        name: "",
+        slug: "",
+        parent: "",
+        image: null,
+      });
+
       // 🔥 refresh categories
-      const res = await API.get("/categories/all");
-      setAllCategories(res.data);
+      const all = await API.get("/categories/all");
+      setAllCategories(all.data);
+
+      const main = await API.get("/categories");
+      setCategories(main.data);
 
     } catch (err) {
       console.log(err);
@@ -435,7 +498,7 @@ export default function Products() {
           <div className="bg-white p-6 rounded-xl w-full max-w-md">
 
             <h2 className="text-2xl font-bold mb-4">
-              Add Category
+              {editingCategory ? "Edit Category" : "Add Category"}
             </h2>
 
             <form
@@ -466,22 +529,27 @@ export default function Products() {
               />
 
               {/* PARENT CATEGORY */}
-              <select
-                name="parent"
-                value={categoryData.parent}
-                onChange={handleCategoryChange}
-                className="w-full border p-3 rounded"
-              >
-                <option value="">
-                  Main Category
-                </option>
-
-                {categories.map((cat) => (
-                  <option key={cat._id} value={cat._id}>
-                    {cat.name}
+              {!editingCategory && (
+                <select
+                  name="parent"
+                  value={categoryData.parent}
+                  onChange={handleCategoryChange}
+                  className="w-full border p-3 rounded"
+                >
+                  <option value="">
+                    Main Category
                   </option>
-                ))}
-              </select>
+
+                  {categories.map((cat) => (
+                    <option
+                      key={cat._id}
+                      value={cat._id}
+                    >
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               {/* IMAGE */}
               <input
@@ -497,7 +565,7 @@ export default function Products() {
                   type="submit"
                   className="flex-1 bg-green-600 text-white py-3 rounded"
                 >
-                  Save
+                  {editingCategory ? "Update" : "Save"}
                 </button>
 
                 <button
@@ -554,17 +622,117 @@ export default function Products() {
 
         {/* 🔥 MAIN CATEGORY VIEW */}
         {!category && (
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {categories.map((cat) => (
-              <div
-                key={cat._id}
-                onClick={() => navigate(`/products/${cat.slug}`)}
-                className="bg-white p-4 shadow cursor-pointer hover:shadow-xl text-center"
-              >
-                {cat.name}
+          <>
+            {isAdmin && (
+              <div className="flex justify-end mb-8">
+                <button
+                  onClick={() => {
+                    setEditingCategory(null);
+
+                    setCategoryData({
+                      name: "",
+                      slug: "",
+                      parent: "",
+                      image: null,
+                    });
+
+                    setShowCategoryModal(true);
+                  }}
+                  className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition"
+                >
+                  + Add Category
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-14">
+              {categories.map((cat) => (
+                <div
+                  key={cat._id}
+                  className="group"
+                >
+                  {/* IMAGE */}
+                  <div
+                    onClick={() => navigate(`/products/${cat.slug}`)}
+                    className="
+              cursor-pointer
+              bg-gray-50
+              overflow-hidden
+              aspect-square
+              flex
+              items-center
+              justify-center
+            "
+                  >
+                    {cat.image ? (
+                      <img
+                        src={
+                          cat.image.startsWith("http")
+                            ? cat.image
+                            : `http://localhost:5004/${cat.image}`
+                        }
+                        alt={cat.name}
+                        className="
+                  w-full
+                  h-full
+                  object-contain
+                  group-hover:scale-105
+                  transition
+                  duration-300
+                "
+                      />
+                    ) : (
+                      <div className="text-6xl">
+                        🧰
+                      </div>
+                    )}
+                  </div>
+
+                  {/* CATEGORY NAME */}
+                  <h3
+                    onClick={() =>
+                      navigate(`/products/${cat.slug}`)
+                    }
+                    className="
+              mt-5
+              text-center
+              text-2xl
+              font-semibold
+              text-gray-800
+              cursor-pointer
+              hover:text-teal-600
+              transition
+            "
+                  >
+                    {cat.name}
+                  </h3>
+
+                  {/* ADMIN EDIT */}
+                  {isAdmin && (
+                    <div className="mt-4 flex justify-center">
+                      <button
+                        onClick={() =>
+                          openCategoryEdit(cat)
+                        }
+                        className="
+                  px-5
+                  py-2
+                  border
+                  rounded-lg
+                  text-sm
+                  hover:bg-black
+                  hover:text-white
+                  transition
+                "
+                      >
+                        Edit Category
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
 
         {/* 🔥 SUBCATEGORY VIEW */}
@@ -578,10 +746,23 @@ export default function Products() {
               {subCategories.map((cat) => (
                 <div
                   key={cat._id}
-                  onClick={() => navigate(`/products/${cat.slug}`)} // 🔥 no nesting
-                  className="bg-white p-4 shadow cursor-pointer hover:shadow-xl text-center"
+                  className="bg-white p-4 shadow hover:shadow-xl text-center"
                 >
-                  {cat.name}
+                  <div
+                    onClick={() => navigate(`/products/${cat.slug}`)}
+                    className="cursor-pointer"
+                  >
+                    {cat.name}
+                  </div>
+
+                  {isAdmin && (
+                    <button
+                      onClick={() => openSubCategoryEdit(cat)}
+                      className="mt-3 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg"
+                    >
+                      Edit Sub Category
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -589,12 +770,14 @@ export default function Products() {
         )}
         {category && subCategories.length === 0 && isAdmin && (
           <div className="mb-6 flex justify-end">
+
             <button
               onClick={openAddModal}
               className="bg-black text-white px-5 py-2 rounded-lg"
             >
               Add Product
             </button>
+
           </div>
         )}
         {/* 🔥 PRODUCT VIEW */}
@@ -760,11 +943,11 @@ active:scale-105
 
                         {cartItems.includes(p._id) ? (
                           <>
-                            ✅ Added
+                            Added
                           </>
                         ) : (
                           <>
-                            🛒 Add to Cart
+                            Add to Cart
                           </>
                         )}
                       </button>
@@ -1065,26 +1248,13 @@ active:scale-105
                     {cartItems.includes(
                       selectedProduct._id
                     )
-                      ? "✅ Added"
-                      : "🛒 Add to Cart"}
+                      ? "Added"
+                      : "Add to Cart"}
 
                   </button>
 
                   {/* WISHLIST */}
-                  <button
-                    className="
-                w-14 h-14
-                rounded-2xl
-                border border-gray-200
-                flex items-center justify-center
-                text-2xl
-                hover:bg-gray-100
-                transition
-                shrink-0
-              "
-                  >
-                    ❤️
-                  </button>
+
                 </div>
               </div>
             </div>
