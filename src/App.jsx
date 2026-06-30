@@ -18,6 +18,8 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import Checkout from "./pages/user/Checkout";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgetPassword";
+import Orders from "./pages/user/Order";
+import AdminOrderDetails from "./pages/admin/AdminOrderDetails";
 function App() {
   return (
     <BrowserRouter>
@@ -45,6 +47,18 @@ function App() {
   element={
     <ProtectedRoute>
       <Products />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/orders/:id"
+  element={<AdminOrderDetails />}
+/>
+<Route
+  path="/orders"
+  element={
+    <ProtectedRoute>
+      <Orders />
     </ProtectedRoute>
   }
 />

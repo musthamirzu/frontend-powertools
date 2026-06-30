@@ -242,31 +242,28 @@ export default function Products() {
       if (categoryData.image) {
         data.append("image", categoryData.image);
       }
-      const editingItem = editingCategory || editingSubCategory;
+    
+const editingItem =
+  editingCategory || editingSubCategory;
 
-      if (editingItem) {
-        await API.put(
-          `/categories/${editingItem._id}`,
-          formData
-        );
-      } else {
-        await API.post(
-          "/categories/create",
-          formData
-        );
-      }
+if (editingItem) {
 
-      if (editingCategory) {
-        await API.put(
-          `/categories/${editingCategory.id}`,
-          data
-        );
-      } else {
-        await API.post(
-          "/categories/create",
-          data
-        );
-      }
+  const categoryId =
+    editingItem.id || editingItem._id;
+
+  await API.put(
+    `/categories/${categoryId}`,
+    data
+  );
+
+} else {
+
+  await API.post(
+    "/categories/create",
+    data
+  );
+
+}
 
       alert("Category created");
 
@@ -736,38 +733,97 @@ export default function Products() {
         )}
 
         {/* 🔥 SUBCATEGORY VIEW */}
-        {category && subCategories.length > 0 && (
-          <>
-            <h2 className="text-xl font-bold mb-4 capitalize">
-              {category.replace("-", " ")}
-            </h2>
+      {category && subCategories.length > 0 && (
+  <>
+    <h2 className="text-xl font-bold mb-8 capitalize">
+      {category.replace("-", " ")}
+    </h2>
 
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {subCategories.map((cat) => (
-                <div
-                  key={cat._id}
-                  className="bg-white p-4 shadow hover:shadow-xl text-center"
-                >
-                  <div
-                    onClick={() => navigate(`/products/${cat.slug}`)}
-                    className="cursor-pointer"
-                  >
-                    {cat.name}
-                  </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-14">
+      {subCategories.map((cat) => (
+        <div
+          key={cat.id || cat._id}
+          className="group"
+        >
+          {/* IMAGE */}
+          <div
+            onClick={() => navigate(`/products/${cat.slug}`)}
+            className="
+              cursor-pointer
+              bg-gray-50
+              overflow-hidden
+              aspect-square
+              flex
+              items-center
+              justify-center
+            "
+          >
+            {cat.image ? (
+              <img
+                src={
+                  cat.image.startsWith("http")
+                    ? cat.image
+                    : `http://localhost:5004/${cat.image}`
+                }
+                alt={cat.name}
+                className="
+                  w-full
+                  h-full
+                  object-contain
+                  group-hover:scale-105
+                  transition
+                  duration-300
+                "
+              />
+            ) : (
+              <div className="text-6xl">
+                🧰
+              </div>
+            )}
+          </div>
 
-                  {isAdmin && (
-                    <button
-                      onClick={() => openSubCategoryEdit(cat)}
-                      className="mt-3 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg"
-                    >
-                      Edit Sub Category
-                    </button>
-                  )}
-                </div>
-              ))}
+          {/* NAME */}
+          <h3
+            onClick={() => navigate(`/products/${cat.slug}`)}
+            className="
+              mt-5
+              text-center
+              text-2xl
+              font-semibold
+              text-gray-800
+              cursor-pointer
+              hover:text-teal-600
+              transition
+            "
+          >
+            {cat.name}
+          </h3>
+
+          {/* ADMIN EDIT */}
+          {isAdmin && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => openSubCategoryEdit(cat)}
+                className="
+                  px-5
+                  py-2
+                  border
+                  rounded-lg
+                  text-sm
+                  hover:bg-black
+                  hover:text-white
+                  transition
+                "
+              >
+                Edit Sub Category
+              </button>
             </div>
-          </>
-        )}
+          )}
+        </div>
+      ))}
+    </div>
+  </>
+)}
         {category && subCategories.length === 0 && isAdmin && (
           <div className="mb-6 flex justify-end">
 

@@ -105,29 +105,70 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-2xl shadow p-6 mb-6">
-        <h2 className="text-xl font-bold mb-4">
-          Recent Orders
-        </h2>
+     {/* Recent Orders */}
+<div className="bg-white rounded-2xl shadow p-6 mb-6">
 
-        {stats.recentOrders.map((o) => (
-          <div
-            key={o._id}
-            className="
-              flex justify-between
-              py-3 border-b
-            "
-          >
-            <span>
-              {o.userId?.name}
-            </span>
+  <div className="flex justify-between items-center mb-5">
+    <h2 className="text-xl font-bold">
+      Recent Orders
+    </h2>
 
-            <span>
-              ₹{o.totalAmount}
-            </span>
-          </div>
-        ))}
+    <button
+      onClick={() => navigate("/admin/orders")}
+      className="text-blue-600 hover:underline"
+    >
+      View All
+    </button>
+  </div>
+
+  {stats.recentOrders.map((order) => (
+
+    <div
+      key={order._id}
+      onClick={() => navigate(`/admin/orders/${order._id}`)}
+      className="
+        cursor-pointer
+        hover:bg-gray-50
+        rounded-xl
+        p-4
+        transition
+        border-b
+      "
+    >
+
+      <h3 className="font-semibold text-lg">
+        {order.userId?.name}
+      </h3>
+
+      <p className="text-gray-500 text-sm mt-1">
+
+        {order.items
+          ?.slice(0, 2)
+          .map((item) => item.name)
+          .join(", ")}
+
+        {order.items?.length > 2 &&
+          ` +${order.items.length - 2} more`}
+
+      </p>
+
+      <div className="flex justify-between items-center mt-3">
+
+        <span className="text-xs text-gray-400">
+          {new Date(order.createdAt).toLocaleDateString("en-IN")}
+        </span>
+
+        <span className="font-bold text-green-600">
+          ₹{order.totalAmount}
+        </span>
+
       </div>
+
+    </div>
+
+  ))}
+
+</div>
 
       {/* Recent Users */}
       <div className="bg-white rounded-2xl shadow p-6">

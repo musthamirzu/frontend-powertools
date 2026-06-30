@@ -48,21 +48,35 @@ export default function AdminOrders() {
     0
   );
 
-  const statusColor = {
-  Pending: "bg-yellow-100 text-yellow-700",
-  Processing: "bg-blue-100 text-blue-700",
-  Shipped: "bg-purple-100 text-purple-700",
-  Delivered: "bg-green-100 text-green-700",
-  Cancelled: "bg-red-100 text-red-700",
+const statusColor = {
+  placed: "bg-blue-100 text-blue-700",
+  shipped: "bg-yellow-100 text-yellow-700",
+  delivered: "bg-green-100 text-green-700",
+  cancelled: "bg-red-100 text-red-700",
 };
-  const pendingOrders = orders.filter(
-    (o) => o.status === "Pending"
-  ).length;
+const placedOrders = orders.filter(
+  (o) => o.status === "placed"
+).length;
 
-  const deliveredOrders = orders.filter(
-    (o) => o.status === "Delivered"
-  ).length;
+const shippedOrders = orders.filter(
+  (o) => o.status === "shipped"
+).length;
 
+const deliveredOrders = orders.filter(
+  (o) => o.status === "delivered"
+).length;
+  const updateOrderStatus = async (id, status) => {
+  try {
+    await API.put(`/admin/orders/${id}/status`, {
+      status,
+    });
+
+    fetchOrders();
+
+  } catch (err) {
+    console.log(err);
+  }
+};
   return (
     <div className="min-h-screen bg-gray-100 p-6">
 
@@ -107,7 +121,13 @@ export default function AdminOrders() {
   <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-3xl shadow-lg p-6">
     <p className="text-white/80">Pending</p>
     <h2 className="text-4xl font-bold mt-2">
-      {pendingOrders}
+      {placedOrders}
+    </h2>
+  </div>
+    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-3xl shadow-lg p-6">
+    <p className="text-white/80">Shipped</p>
+    <h2 className="text-4xl font-bold mt-2">
+      {shippedOrders}
     </h2>
   </div>
 
@@ -378,6 +398,120 @@ export default function AdminOrders() {
     <h4 className="text-2xl font-bold text-green-700">
       ₹{order.totalAmount}
     </h4>
+  </div>
+
+</div>
+       {/* Order Status */}
+<div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
+
+  <h3 className="text-lg font-bold mb-5">
+    Order Status
+  </h3>
+
+  <div className="flex items-center justify-between flex-wrap gap-4">
+
+    <div>
+
+      <p className="text-gray-500 text-sm">
+        Current Status
+      </p>
+
+      <span
+        className={`
+          inline-block
+          mt-2
+          px-4
+          py-2
+          rounded-full
+          font-semibold
+
+          ${
+            order.status === "placed"
+              ? "bg-blue-100 text-blue-700"
+
+            : order.status === "shipped"
+              ? "bg-yellow-100 text-yellow-700"
+
+            : "bg-green-100 text-green-700"
+          }
+        `}
+      >
+        {order.status.toUpperCase()}
+      </span>
+
+    </div>
+
+    <div className="flex gap-3">
+
+      {order.status === "placed" && (
+
+        <button
+          onClick={() =>
+            updateOrderStatus(
+              order._id,
+              "shipped"
+            )
+          }
+          className="
+            bg-blue-600
+            hover:bg-blue-700
+            text-white
+            px-6
+            py-3
+            rounded-xl
+            font-semibold
+            transition
+          "
+        >
+          Ship Order
+        </button>
+
+      )}
+
+      {order.status === "shipped" && (
+
+        <button
+          onClick={() =>
+            updateOrderStatus(
+              order._id,
+              "delivered"
+            )
+          }
+          className="
+            bg-green-600
+            hover:bg-green-700
+            text-white
+            px-6
+            py-3
+            rounded-xl
+            font-semibold
+            transition
+          "
+        >
+          Mark as Delivered
+        </button>
+
+      )}
+
+      {order.status === "delivered" && (
+
+        <div
+          className="
+            bg-green-100
+            text-green-700
+            px-6
+            py-3
+            rounded-xl
+            font-semibold
+          "
+        >
+          Order Delivered
+        </div>
+
+      )}
+
+    </div>
+
   </div>
 
 </div>
