@@ -2,12 +2,13 @@ import React, {
   useState,
   useEffect,
 } from "react";
-
+import { useNavigate } from "react-router-dom";
 import API from "../../services/api";
 
 export default function NewArrivals() {
   const [products, setProducts] =
     useState([]);
+  const navigate = useNavigate();
 
   const [showAll, setShowAll] =
     useState(false);
@@ -151,18 +152,19 @@ export default function NewArrivals() {
               <div className="flex justify-center mt-5">
 
                 <button
-                  className="
-                    bg-teal-600
-                    hover:bg-teal-700
-                    text-white
-                    px-6
-                    py-2
-                    rounded-md
-                    text-sm
-                  "
-                >
-                  Buy Now
-                </button>
+  onClick={() => navigate(`/product/${item._id}`)}
+  className="
+    bg-teal-600
+    hover:bg-teal-700
+    text-white
+    px-6
+    py-2
+    rounded-md
+    text-sm
+  "
+>
+  Buy Now
+</button>
 
               </div>
 

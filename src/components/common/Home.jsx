@@ -11,9 +11,10 @@ import ContactUs from "./ContactUs";
 import Testimonials from "./Testimonials";
 import QuoteSection from "./Quotesection";
 import FranchiseSection from "./FranchiseSection";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
 
   // 🔥 PARALLAX SCROLL
   const { scrollY } = useScroll();
@@ -51,10 +52,12 @@ export default function Home() {
             The widest range of tools under a single brand. <br />
             Bestseller among South India.
           </p>
-
-          <button className="bg-teal-600 text-white px-6 py-2 rounded-lg">
-            Shop Now
-          </button>
+<button
+  onClick={() => navigate("/products")}
+  className="bg-teal-600 text-white px-6 py-2 rounded-lg"
+>
+  Shop Now
+</button>
         </div>
 
       </div>
@@ -95,12 +98,13 @@ export default function Home() {
             </p>
 
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition"
-            >
-              Shop Now
-            </motion.button>
+  onClick={() => navigate("/products")}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition"
+>
+  Shop Now
+</motion.button>
           </motion.div>
 
         </div>

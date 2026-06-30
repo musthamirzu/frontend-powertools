@@ -20,6 +20,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ForgotPassword from "./pages/auth/ForgetPassword";
 import Orders from "./pages/user/Order";
 import AdminOrderDetails from "./pages/admin/AdminOrderDetails";
+import ProductDetails from "./pages/user/ProductDetails";
 function App() {
   return (
     <BrowserRouter>
@@ -49,6 +50,11 @@ function App() {
       <Products />
     </ProtectedRoute>
   }
+/>
+
+<Route
+  path="/product/:id"
+  element={<ProductDetails />}
 />
 <Route
   path="/admin/orders/:id"
